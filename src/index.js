@@ -4,8 +4,8 @@ import GetRoomNames from "./getMapSize/index.js";
 import getAllUsers, { getUsernames } from "./getAllUsers/index.js";
 
 export default class ScreepsApi {
-    constructor(token) {
-        initScreepsApi(token);
+    constructor(loginInfo) {
+        initScreepsApi(loginInfo);
     }
 
     getRoomNames(shard) {

@@ -5,14 +5,21 @@ let api;
 
 export default function getApi() {
     return api;
-};
+}
 
-export function initScreepsApi(token) {
-    api = new ScreepsAPI({
-        token,
+export let isPrivateServer = false;
+
+export async function initScreepsApi(loginInfo) {
+    if (typeof loginInfo === 'string') api = new ScreepsAPI({
+        token: loginInfo,
         protocol: "https",
         hostname: "screeps.com",
         port: 443,
         path: "/"
-    });
+    })
+    else {
+        isPrivateServer = true;
+        api = new ScreepsAPI(loginInfo);
+        await api.auth(loginInfo.username, loginInfo.password);
+    }
 }
