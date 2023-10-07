@@ -5,5 +5,5 @@ export function sleep(ms) {
 }
 
 export function getShardNames() {
-    return !isPrivateServer ? ['shard0', 'shard1', 'shard2', 'shard3'] : [undefined]
+    return !isPrivateServer ? ['shard0', 'shard1', 'shard2', 'shard3'] : ['shard']
 }

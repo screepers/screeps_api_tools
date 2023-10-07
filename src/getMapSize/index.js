@@ -18,8 +18,8 @@ export default async function GetRoomNames(shard) {
     const size = await GetWorldSize(shard);
     await sleep(500);
 
-    for (let x = 0; x < size.width / 2; x += 1) {
-        for (let y = 0; y < size.height / 2; y += 1) {
+    for (let x = 0; x < size.width; x += 1) {
+        for (let y = 0; y < size.height; y += 1) {
             roomNames.push(`E${x}N${y}`);
             roomNames.push(`W${x}N${y}`);
             roomNames.push(`E${x}S${y}`);
