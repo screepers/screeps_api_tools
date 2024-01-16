@@ -1,26 +1,70 @@
-import { initScreepsApi } from "./initScreepsApi.js";
+import winston from 'winston';
+import 'winston-daily-rotate-file';
 
-import GetRoomNames from "./getMapSize/index.js";
+import getAPI, { setLoginInfo } from "./api/initScreepsApi.js";
+import ScreepsApi from "./api/screepsApi.js"
+
 import getAllUsers, { getUsernames } from "./getAllUsers/index.js";
+import GetWorldSize, { GetRoomNames } from './getMapSize/index.js'
 
-export default class ScreepsApi {
-    constructor(loginInfo) {
-        initScreepsApi(loginInfo);
+
+const transport = new winston.transports.DailyRotateFile({
+    level: 'info',
+    filename: 'logs/application-%DATE%.log',
+    datePattern: 'YYYY-MM-DD-HH',
+    zippedArchive: true,
+    maxSize: '20m',
+    maxFiles: '14d'
+});
+
+const logger = winston.createLogger({
+    transports: [
+        transport
+    ]
+});
+export default class AdvancedScreepsApi {
+    constructor(loginInfo, settings = {}) {
+        setLoginInfo(loginInfo);
+        ScreepsApi.settings = settings;
     }
 
-    getRoomNames(shard) {
-        return GetRoomNames(shard);
+    async getRoomNames(shard) {
+        try {
+            await getAPI(true)
+            return await GetRoomNames(shard);
+        } catch (error) {
+            logger.error(error);
+            return undefined;
+        }
     }
 
-    getWorldSize(shard) {
-        return GetWorldSize(shard);
+    async getWorldSize(shard) {
+        try {
+            await getAPI(true)
+            return await GetWorldSize(shard);
+        } catch (error) {
+            logger.error(error);
+            return undefined;
+        }
     }
 
-    getAllUsers() {
-        return getAllUsers();
+    async getAllUsers() {
+        try {
+            await getAPI(true)
+            return getAllUsers();
+        } catch (error) {
+            logger.error(error);
+            return undefined;
+        }
     }
 
-    getUsernames() {
-        return getUsernames();
+    async getUsernames() {
+        try {
+            await getAPI(true)
+            return await getUsernames();
+        } catch (error) {
+            logger.error(error);
+            return undefined;
+        }
     }
 }

@@ -1,25 +1,15 @@
 
-import { sleep, getShardNames } from '../helper.js';
-import getRoomNames from '../getMapSize/index.js';
-import ScreepsApi from '../initScreepsApi.js';
-import { GetGclOfUsers, GetPowerOfUsers } from './userInfo.js';
-
-export async function GetMapStats(shard, rooms) {
-    await sleep(500);
-
-    try {
-        const mapStats = await ScreepsApi().raw.game.mapStats(rooms, "owner0", shard);
-        if (!mapStats.ok) throw new Error(JSON.stringify(mapStats));
-        return mapStats;
-    } catch (error) {
-        return undefined;
-    }
-}
+import { getShardNames } from '../helper.js';
+import { GetRoomNames } from '../getMapSize/index.js';
+import ScreepsApi from '../api/screepsApi.js';
 
 async function getAllUsersPerShard(mapStats) {
     const { stats, users } = mapStats;
     const roomsByUsername = {};
-    Object.entries(stats).forEach(([room, stat]) => {
+    const roomNameKeys = Object.keys(stats);
+    for (let r = 0; r < roomNameKeys.length; r++) {
+        const room = roomNameKeys[r];
+        const stat = stats[room];
         const { own } = stat;
         if (own) {
             const { username, _id } = users[own.user];
@@ -32,7 +22,7 @@ async function getAllUsersPerShard(mapStats) {
                 roomsByUsername[username].reserved.push(room);
             }
         }
-    });
+    };
 
     delete roomsByUsername.Invader;
 
@@ -43,13 +33,13 @@ export default async function getAllUsers() {
     const shards = getShardNames();
     const users = [];
 
-    const gcls = await GetGclOfUsers();
-    const powers = await GetPowerOfUsers();
+    const gcls = await ScreepsApi.gclLeaderboard();
+    const powers = await ScreepsApi.powerLeaderboard();
 
     for (let s = 0; s < shards.length; s++) {
         const shard = shards[s];
-        const rooms = await getRoomNames(shard);
-        const mapStats = await GetMapStats(shard, rooms);
+        const rooms = await GetRoomNames(shard);
+        const mapStats = await ScreepsApi.mapStats(shard, rooms);
         const usersPerShard = await getAllUsersPerShard(mapStats);
 
         const usernames = Object.keys(usersPerShard);
