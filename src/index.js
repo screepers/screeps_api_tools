@@ -24,7 +24,7 @@ const logger = winston.createLogger({
 });
 export default class AdvancedScreepsApi {
     constructor(loginInfo, settings = {}) {
-        setLoginInfo(loginInfo);
+        setLoginInfo(loginInfo, settings);
         ScreepsApi.settings = settings;
     }
 

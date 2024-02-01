@@ -1,10 +1,14 @@
 import { isPrivateServer } from "./api/initScreepsApi.js";
+import { isSeasonal } from "./api/initScreepsApi.js";
 
 export function sleep(ms) {
     return new Promise((resolve) => setTimeout(resolve, ms));
 }
 
 export function getShardNames() {
+    if (isSeasonal) {
+        return ['shardSeason'];
+    }
     return !isPrivateServer ? ['shard0', 'shard1', 'shard2', 'shard3'] : ['shard']
 }
 

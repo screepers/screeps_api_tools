@@ -6,9 +6,13 @@ let api;
 let loginInfo = undefined;
 
 export let isPrivateServer = false;
+export let isSeasonal = false;
 
-export function setLoginInfo(info) {
+export function setLoginInfo(info, settings) {
     loginInfo = info;
+    if (settings.isSeasonal) {
+        isSeasonal = true;
+    }
 }
 
 export async function authenticateAPI() {
@@ -18,7 +22,7 @@ export async function authenticateAPI() {
             protocol: "https",
             hostname: "screeps.com",
             port: 443,
-            path: "/"
+            path: !isSeasonal ? "/season" : "/"
         })
         isPrivateServer = false;
     }
