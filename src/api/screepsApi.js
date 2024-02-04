@@ -1,8 +1,9 @@
 import winston from 'winston';
 import 'winston-daily-rotate-file';
 
-import getScreepsApi from "./initScreepsApi.js";
+import getScreepsApi, { mmoToken, isSeasonal } from "./initScreepsApi.js";
 import { sleep, mergeDeep } from '../helper.js';
+import axios from 'axios';
 
 const transport = new winston.transports.DailyRotateFile({
     level: 'info',
@@ -50,7 +51,7 @@ export default class ScreepsApi {
 
         const api = await getScreepsApi();
         for (const chunk of roomChunks) {
-            await sleep(1000); // Add a delay between batches
+            await sleep(500); // Add a delay between batches
 
             try {
                 const mapStats = await api.raw.game.mapStats(chunk, "owner0", shard);
@@ -95,10 +96,41 @@ export default class ScreepsApi {
 
                 if (users.length === 0) hasUsersLeft = false;
                 offset += 20;
-                await sleep(1000);
+                await sleep(500);
             }
 
             return gcls;
+        } catch (error) {
+            logger.error(error);
+            return {};
+        }
+    }
+
+    static async seasonalLeaderboard() {
+        try {
+            if (!isSeasonal) return {};
+            const seasonals = {};
+
+            let offset = 0;
+            let hasUsersLeft = true;
+
+            while (hasUsersLeft) {
+                const response = await axios.get(`
+                https://screeps.com/season/api/scoreboard/list?limit=10&offset=${offset}&_token=${mmoToken}`)
+                const leaderboard = response.data;
+
+                const users = Object.keys(leaderboard.users);
+                for (let u = 0; u < users.length; u++) {
+                    const user = leaderboard.users[users[u]];
+                    seasonals[user.username] = user.score;
+                }
+
+                if (users.length === 0) hasUsersLeft = false;
+                offset += 10;
+                await sleep(500);
+            }
+
+            return seasonals;
         } catch (error) {
             logger.error(error);
             return {};
@@ -146,7 +178,6 @@ export default class ScreepsApi {
                         hasUsersLeft = false;
                     }
                 }
-                await sleep(1000);
             }
 
             return powers;
@@ -163,7 +194,7 @@ export default class ScreepsApi {
             return { width, height };
         }
 
-        await sleep(1000);
+        await sleep(500);
         try {
             const api = await getScreepsApi();
             const size = await api.raw.game.worldSize(shard);

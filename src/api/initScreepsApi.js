@@ -7,6 +7,7 @@ let loginInfo = undefined;
 
 export let isPrivateServer = false;
 export let isSeasonal = false;
+export let mmoToken
 
 export function setLoginInfo(info, settings) {
     loginInfo = info;
@@ -22,9 +23,10 @@ export async function authenticateAPI() {
             protocol: "https",
             hostname: "screeps.com",
             port: 443,
-            path: !isSeasonal ? "/season" : "/"
+            path: !isSeasonal ? "/" : "/season"
         })
         isPrivateServer = false;
+        mmoToken = loginInfo;
     }
     else {
         isPrivateServer = true;

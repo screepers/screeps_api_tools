@@ -9,7 +9,7 @@ export default async function GetWorldSize(shard) {
 export async function GetRoomNames(shard) {
     const roomNames = [];
     const size = await ScreepsApi.worldSize(shard);
-    await sleep(1000);
+    await sleep(500);
 
     let width = size.width / 2;
     let height = size.height / 2;

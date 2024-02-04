@@ -35,6 +35,7 @@ export default async function getAllUsers() {
 
     const gcls = await ScreepsApi.gclLeaderboard();
     const powers = await ScreepsApi.powerLeaderboard();
+    const seasonal = await ScreepsApi.seasonalLeaderboard();
 
     for (let s = 0; s < shards.length; s++) {
         const shard = shards[s];
@@ -53,6 +54,7 @@ export default async function getAllUsers() {
                 id: userData.id,
                 gcl: gcls[username],
                 power: powers[username],
+                seasonal: seasonal[username],
             });
 
             users[users.length - 1].shards[shard] = {
