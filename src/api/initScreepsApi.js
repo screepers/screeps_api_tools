@@ -7,12 +7,20 @@ let loginInfo = undefined;
 
 export let isPrivateServer = false;
 export let isSeasonal = false;
+export let includeAllRooms = false;
+export let roomStatsBatchSize = 25 * 1000;
 export let mmoToken
 
 export function setLoginInfo(info, settings) {
     loginInfo = info;
     if (settings.isSeasonal) {
         isSeasonal = true;
+    }
+    if (settings.includeAllRooms) {
+        includeAllRooms = true;
+    }
+    if (settings.roomStatsBatchSize) {
+        roomStatsBatchSize = settings.roomStatsBatchSize;
     }
 }
 

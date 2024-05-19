@@ -1,5 +1,4 @@
-import { isPrivateServer } from "./api/initScreepsApi.js";
-import { isSeasonal } from "./api/initScreepsApi.js";
+import { isPrivateServer, isSeasonal } from "./api/initScreepsApi.js";
 
 export function sleep(ms) {
     return new Promise((resolve) => setTimeout(resolve, ms));

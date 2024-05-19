@@ -2,6 +2,7 @@
 import { getShardNames } from '../helper.js';
 import { GetRoomNames } from '../getMapSize/index.js';
 import ScreepsApi from '../api/screepsApi.js';
+import { includeAllRooms } from "../api/initScreepsApi.js";
 
 async function getAllUsersPerShard(mapStats) {
     const { stats, users } = mapStats;
@@ -14,13 +15,22 @@ async function getAllUsersPerShard(mapStats) {
         if (own) {
             const { username, _id } = users[own.user];
             if (!roomsByUsername[username]) {
-                roomsByUsername[username] = { id: _id, owned: [], reserved: [] };
+                roomsByUsername[username] = { id: _id, owned: [], reserved: [], unknown: [] };
             }
-            if (own.level > 0) {
-                roomsByUsername[username].owned.push(room);
-            } else {
-                roomsByUsername[username].reserved.push(room);
+            if (!includeAllRooms) {
+                if (own.level > 0) {
+                    roomsByUsername[username].owned.push(room);
+                } else {
+                    roomsByUsername[username].reserved.push(room);
+                }
             }
+        }
+
+        if (includeAllRooms) {
+            if (!roomsByUsername["Unknown"]) {
+                roomsByUsername["Unknown"] = { id: "Unknown", owned: [], reserved: [], unknown: [] };
+            }
+            roomsByUsername["Unknown"].unknown.push(room);
         }
     };
 
@@ -48,18 +58,22 @@ export default async function getAllUsers() {
             const username = usernames[u];
             const userData = usersPerShard[username];
 
-            users.push({
-                username,
-                shards: {},
-                id: userData.id,
-                gcl: gcls[username],
-                power: powers[username],
-                seasonal: seasonal[username],
-            });
-
-            users[users.length - 1].shards[shard] = {
+            let index = users.findIndex(user => user.username === username);
+            if (index === -1) {
+                users.push({
+                    username,
+                    shards: {},
+                    id: userData.id,
+                    gcl: gcls[username],
+                    power: powers[username],
+                    seasonal: seasonal[username],
+                });
+                index = users.length - 1;
+            }
+            users[index].shards[shard] = {
                 owned: userData.owned,
                 reserved: userData.reserved,
+                unknown: userData.unknown,
             };
         }
     }

@@ -1,7 +1,7 @@
 import winston from 'winston';
 import 'winston-daily-rotate-file';
 
-import getScreepsApi, { mmoToken, isSeasonal } from "./initScreepsApi.js";
+import getScreepsApi, { mmoToken, isSeasonal, roomStatsBatchSize } from "./initScreepsApi.js";
 import { sleep, mergeDeep } from '../helper.js';
 import axios from 'axios';
 
@@ -44,7 +44,7 @@ export default class ScreepsApi {
     static settings;
 
     static async mapStats(shard, rooms) {
-        const batchSize = 25 * 1000; // You can adjust this value based on your needs
+        const batchSize = roomStatsBatchSize; // You can adjust this value based on your needs
         const roomChunks = chunkArray(rooms, batchSize);
 
         let results = {};
