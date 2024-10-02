@@ -27,10 +27,11 @@ function getSeason(getLastSeason) {
         today.setMonth(today.getMonth() - 1);
     }
 
-    if (today.getMonth() < 10) {
-        return `${today.getFullYear()}-0${today.getMonth() + 1}`;
+    const month = today.getMonth() + 1;
+    if (month < 10) {
+        return `${today.getFullYear()}-0${month}`;
     }
-    return `${today.getFullYear()}-${today.getMonth()}`;
+    return `${today.getFullYear()}-${month}`;
 }
 function chunkArray(array, size) {
     const result = [];
