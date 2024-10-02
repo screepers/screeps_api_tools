@@ -52,8 +52,6 @@ export default class ScreepsApi {
 
         const api = await getScreepsApi();
         for (const chunk of roomChunks) {
-            await sleep(500); // Add a delay between batches
-
             try {
                 const mapStats = await api.raw.game.mapStats(chunk, "owner0", shard);
                 if (!mapStats.ok) throw new Error(JSON.stringify(mapStats));
