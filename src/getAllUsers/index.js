@@ -85,3 +85,11 @@ export async function getUsernames() {
     const users = await getAllUsers();
     return users.map(user => user.username);
 }
+
+export async function getAllLeaderboard() {
+    const gcls = await ScreepsApi.gclLeaderboard();
+    const powers = await ScreepsApi.powerLeaderboard();
+    const seasonal = await ScreepsApi.seasonalLeaderboard();
+
+    return { gcl: gcls, power: powers, seasonal: seasonal };
+}

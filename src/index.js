@@ -4,7 +4,7 @@ import 'winston-daily-rotate-file';
 import getAPI, { setLoginInfo } from "./api/initScreepsApi.js";
 import ScreepsApi from "./api/screepsApi.js"
 
-import getAllUsers, { getUsernames } from "./getAllUsers/index.js";
+import getAllUsers, { getUsernames, getAllLeaderboard } from "./getAllUsers/index.js";
 import GetWorldSize, { GetRoomNames } from './getMapSize/index.js'
 
 
@@ -62,6 +62,16 @@ export default class AdvancedScreepsApi {
         try {
             await getAPI(true)
             return await getUsernames();
+        } catch (error) {
+            logger.error(error);
+            return undefined;
+        }
+    }
+
+    async getAllLeaderboard() {
+        try {
+            await getAPI(true)
+            return await getAllLeaderboard();
         } catch (error) {
             logger.error(error);
             return undefined;
